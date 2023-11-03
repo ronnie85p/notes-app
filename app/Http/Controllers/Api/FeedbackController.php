@@ -10,20 +10,15 @@ use Illuminate\Http\Request;
 
 class FeedbackController extends Controller
 {
-    public function resource($data)
-    {
-        return new Resource($data);
-    }
-
     public function index(Request $request)
     {
-        return new Resource(FeedbackService::getList($request->input()));
+        return new Resource(FeedbackService::getList());
     }
 
     public function store(FeedbackRequest $request)
     {
         $validated = $request->validated();
 
-        return $this->resource(FeedbackService::send($validated));
+        return new Resource(FeedbackService::send($validated));
     }
 }

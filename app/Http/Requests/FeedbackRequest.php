@@ -28,6 +28,16 @@ class FeedbackRequest extends FormRequest
         ];
     }
 
+    public function validated($key = null, $default = null)
+    {
+        return [
+            'name' => $this->string('name')->trim(),
+            'email' => $this->string('email')->trim(),
+            'message' => $this->string('message')->trim(),
+            'phone' => $this->string('phone')->trim()
+        ];
+    }
+
     public function messages(): array
     {
         return [
