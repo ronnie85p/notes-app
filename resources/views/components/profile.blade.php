@@ -1,30 +1,45 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<x-layout title="{{ $title }}">
+    <div class="row">
+        <div class="col-3">
+            <div class="card card-primary card-outline">
+                <div class="card-body box-profile">
+                    <div class="text-center">
+                        <!-- <img class="profile-user-img img-fluid img-circle" src="../../dist/img/user4-128x128.jpg" alt="User profile picture"> -->
+                    </div>
+                    <h3 class="profile-username text-center">{{ $user->fullname }}</h3>
+                    <p class="text-muted text-center">Software Engineer</p>
 
-        <title>{{ $title ?: "Laravel"}}</title>
+                    <div class="text-center my-4">
+                        <a class="btn btn-sm btn-primary" href="{{ route('profile.books.create') }}">Добавить книгу</a>
+                    </div>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+                    <ul class="list-group list-group-unbordered mb-3">
+                        <li class="list-group-item">
+                            <a href="{{ route('profile.books.index') }}">Книги</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{{ route('profile.categories.index') }}">Категории</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{{ route('profile.feedbacks.index') }}">Сообщения</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{{ route('profile.settings.show') }}">Настройки</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
-        <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
-    </head>
-    <body>
-        <main class="wrapper">
-            <header class="main-header"></header>
-
-            <section class="content-wrapper" style="margin-left: 0!important;">
-                <div class="m-auto" style="width: 1000px">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="mb-4 h1">{{ $title }}</h1>
+                    <hr class="mb-3">
+                    
                     {{ $slot }}
                 </div>
-            </section>
-
-            <footer class="main-footer"></footer>
-        </main>
-    </body>
-</html>
+            </div>
+        </div>
+    </div>
+</x-layout>

@@ -8,15 +8,15 @@ use App\Services\AuthService;
 
 class LoginService extends AuthService 
 {
-    public static function login(string $username, string $password, bool $remember = false)
+    public static function login(array $credentials, bool $remember = false)
     {
-        if (!Auth::attempt(['username' => $username, 'password' => $password], $remember)) {
+        if (!Auth::attempt($credentials, $remember)) {
             throw new BadRequestHttpException('Неверный логин или пароль или то и другое сразу');
         }
 
         session()->regenerate();
 
-        return Auth::user();
+        return ['url' => route('profile.show'), 'user' => Auth::user()];
     }
 
     public static function logout()
@@ -26,5 +26,7 @@ class LoginService extends AuthService
         session()->invalidate();
      
         session()->regenerateToken();
+
+        return ['url' => route('auth.login')];
     }
 }

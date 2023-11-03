@@ -14,28 +14,27 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-use App\Http\Controllers\api\EventController;
-use App\Http\Controllers\api\auth\LoginController;
-use App\Http\Controllers\api\auth\RegisterController;
+use App\Http\Controllers\Api\Products\CategoryController;
+use App\Http\Controllers\Api\Products\BookController;
+use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\FeedbackController;
+use App\Http\Controllers\Api\Auth\LoginController;
+use App\Http\Controllers\Api\Auth\RegisterController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/events', [EventController::class, 'index']);
-Route::get('/events/owner', [EventController::class, 'creatorIndex']);
-Route::get('/events/{id}', [EventController::class, 'show'])->whereNumber('id');
-Route::get('/events/{id}/members', [EventController::class, 'members'])->whereNumber('id');
-Route::get('/events/{id}/join', [EventController::class, 'join'])->whereNumber('id');
-Route::get('/events/{id}/leave', [EventController::class, 'leave'])->whereNumber('id');
+Route::apiResources([
+    '/books' => BookController::class,
+    '/categories' => CategoryController::class,
+    '/feedbacks' => FeedbackController::class,
+]);
 
-Route::delete('/events/{id}', [EventController::class, 'destroy'])->whereNumber('id');
-
-Route::post('/events', [EventController::class, 'store']);
-Route::put('/events', [EventController::class, 'update']);
-Route::delete('/events', [EventController::class, 'destroy']);
+// Settings
+Route::post('/profile/settings', [ProfileController::class, 'updateSettings']);
 
 // Authorization & registration
-Route::post('/auth/login', [LoginController::class, 'login']);
-Route::get('/auth/logout', [LoginController::class, 'logout']);
-Route::post('/auth/register', [RegisterController::class, 'register']);
+Route::put('/auth', [LoginController::class, 'login']);
+Route::get('/auth', [LoginController::class, 'logout']);
+Route::post('/auth', [RegisterController::class, 'register']);

@@ -13,18 +13,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+use App\Http\Controllers\WebController;
+use App\Http\Controllers\Products\BookController;
+use App\Http\Controllers\Profile\CategoryController;
+use App\Http\Controllers\ProfileController;
 
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
+require_once __DIR__ . '/web/auth.php';
+require_once __DIR__ . '/web/profile.php';
 
-Route::get('/register', function () {
-    return view('auth.register');
-})->name('register');
 
-Route::get('/profile', function () {
-    return view('profile.index');
-})->name('profile')->middleware('auth');
+// home
+Route::get('/', [WebController::class, 'index'])->name('home');
+
+
+// feedback
+Route::get('/feedback', [WebController::class, 'feedback'])->name('feedback');
+
+// books
+Route::resource('/books', BookController::class);
