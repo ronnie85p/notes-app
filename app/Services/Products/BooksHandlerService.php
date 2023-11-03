@@ -26,8 +26,6 @@ class BooksHandlerService
     public static function createBook(array $data, $file)
     {
         DB::transaction(function () use ($data, $file): Book {
-            $status = Status::create(['name' => 'PUBLISHED']);
-            $data['status_id'] = $status->id;
             $book = Book::create($data);
             self::updateAuthors($book, $data['authors']);
             self::saveFileToBook($book, $file);
