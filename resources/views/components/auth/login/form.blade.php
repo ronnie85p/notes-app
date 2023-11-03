@@ -1,4 +1,6 @@
 <form class="form" id="auth-login-form">
+    <div class="form-message alert alert-warning"></div>
+
     <div class="input-group mb-3">
         <input type="email" class="form-control" name="email" placeholder="Email">
         <div class="input-group-append">

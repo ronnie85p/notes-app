@@ -2,23 +2,17 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Services\Auth\RegisterService;
 use App\Http\Resources\Resource;
 
 class RegisterController extends Controller
 {
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $data = $request->validate([
-            'fullname' => 'required',
-            'email' => 'required',
-            'password' => 'required',
-            'password_again' => 'required',
-            'agreed' => 'required'
-        ]);
+        $validated = $request->validated();
 
-        return new Resource(RegisterService::register($data));
+        return new Resource(RegisterService::register($validated));
     }
 }

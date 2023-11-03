@@ -9,29 +9,10 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class RegisterService extends AuthService 
 {
-    public static function checkUser(string $email)
-    {
-        if (User::where('email', $email)->exists()) {
-            throw new BadRequestHttpException('Такой пользователь уже существует');
-        }
-    }
-
-    public static function checkPasswords($password, $passwordAgain)
-    {
-        if (strcmp($password, $passwordAgain) !== 0) {
-            throw new BadRequestHttpException('Пароли не совпадают');
-        }
-    }
-
     public static function register(array $data)
     {
-        self::checkUser($data['email']);
-        self::checkPasswords($data['password'], $data['password_again']);
+        User::createOrFail($data);
 
-        if (!User::create($data)) {
-            throw new HttpException('Произошла непредвиденная ошибка.');
-        }
-
-        return ['url' => route('/login')];
+        return ['url' => route('auth.login')];
     }
 }

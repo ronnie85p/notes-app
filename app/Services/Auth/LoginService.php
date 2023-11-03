@@ -8,10 +8,10 @@ use App\Services\AuthService;
 
 class LoginService extends AuthService 
 {
-    public static function login(array $credentials, bool $remember = false)
+    public static function login(array $data, $remember = false)
     {
-        if (!Auth::attempt($credentials, $remember)) {
-            throw new BadRequestHttpException('Неверный логин или пароль или то и другое сразу');
+        if (!Auth::attempt($data, $remember)) {
+            throw new BadRequestHttpException('Неверный логин или пароль');
         }
 
         session()->regenerate();

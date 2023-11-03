@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         view()->composer('*', function ($view) {
-            $view->with('user', Auth::user());
+            $view->with('user', Auth::check() ? Auth::user() : null);
             $view->with('settings', Settings::first());
         });
     }
