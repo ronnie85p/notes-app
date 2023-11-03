@@ -411,7 +411,7 @@ var common = {
                         <div class="mb-2">${item.name}, ${item.email}, ${item.phone}</div>
                         <div class="text-muted">${item.message}</div>
                     </div>
-                </div>`;
+                </div> <hr />`;
             },
 
             getList(container) {
