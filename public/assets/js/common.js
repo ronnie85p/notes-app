@@ -397,7 +397,7 @@ var common = {
             common.form(event.target, (data, options, handlers) => {
                 return http.api.feedbacks.store(data).then(data => {
                     event.target.reset();
-                    handlers.setMessage('Сообщение отправлено!');
+                    handlers.setMessage('Сообщение отправлено!', 'success');
                 });
             });
         }

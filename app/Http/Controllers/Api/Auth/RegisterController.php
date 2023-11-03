@@ -13,6 +13,6 @@ class RegisterController extends Controller
     {
         $validated = $request->validated();
 
-        return new Resource(RegisterService::register($validated));
+        return new Resource(RegisterService::register($validated, true));
     }
 }

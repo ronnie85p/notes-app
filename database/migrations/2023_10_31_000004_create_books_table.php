@@ -59,7 +59,7 @@ return new class extends Migration
             $table->string('isbn')->unique();
 
             // foreign
-            $table->foreignId('status_id')->constrained();
+            $table->foreignId('status_id')->nullable()->constrained();
             $table->foreignId('category_id')->constrained();
 
             // data

@@ -5,6 +5,7 @@ namespace App\Services\Products;
 use App\Models\Products\Book;
 use App\Models\Products\Author;
 use App\Models\Products\Category;
+use App\Models\Products\Status;
 use App\Models\Products\AuthorBook;
 use App\Models\Profile\Settings;
 use Illuminate\Support\Str;
@@ -41,23 +42,29 @@ class BooksHandlerService
 
     public static function createBook(array $data, $file)
     {
-        return DB::transaction(function () use ($data, $file): Book {
+        DB::transaction(function () use ($data, $file): Book {
+            $status = Status::create(['name' => 'PUBLISHED']);
+            $data['status_id'] = $status->id;
             $book = Book::create($data);
             self::updateAuthors($book, $data['authors']);
             self::saveFileToBook($book, $file);
 
             return $book;
         });
+
+        return ['url' => route('profile.books.index')];
     }
 
     public static function updateBook($id, array $data)
     {
-        return DB::transaction(function () use ($id, $data): Book {
+        DB::transaction(function () use ($id, $data): Book {
             $book = Book::findOrFail($id);
             $book->update($data);
 
             return $book;
         });
+
+        return ['url' => route('profile.books.index')];
     }
 
     public static function updateAuthors(Book $book, array $authors)

@@ -23,7 +23,7 @@ class BookRequest extends AppRequest
     public function validated($key = null, $default = null)
     {
         return [
-            'status_id' => 1,
+            'status_id' => 0,
             'thumbnail_url' => '',
             'authors' => array_map('trim', explode(',', $this->string('authors')->trim())),
             'isbn' => $this->string('isbn')->trim(),

@@ -5,6 +5,7 @@ namespace App\Services\Auth;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use App\Services\AuthService;
+use App\Models\User;
 
 class LoginService extends AuthService 
 {

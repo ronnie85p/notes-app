@@ -4,7 +4,7 @@
         <div class="col-5 m-auto">
             <h2 class="mb-4">Обратная связь</h2>
 
-            <div class="alert alert-secondary">
+            <div class="alert alert-warning">
                 <p>Отправка писем на почту не происходит по техническим причинам.</p>
                 <p>Все письма можно просмотреть в профиле.</p>
             </div>
@@ -12,7 +12,8 @@
             <div class="card">
                 <div class="card-body">
                     <form class="form" id="feedback-form">
-                        <div class="alert alert-warning form-message"></div>
+                        <div class="alert alert-danger form-message"></div>
+                        <div class="alert alert-success form-message" data-type="success"></div>
 
                         <div class="form-group">
                             <label for="name">Имя<span class="text-danger">*</span></label>
