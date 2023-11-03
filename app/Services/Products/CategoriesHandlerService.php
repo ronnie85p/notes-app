@@ -19,21 +19,25 @@ class CategoriesHandlerService
 
     public static function createCategory(array $data)
     {
-        DB::transaction(function() use($data): Category {
+        DB::transaction(function() use($data) {
             $category = Category::create($data);
 
             return $category;
         });
+
+        return ['url' => route('profile.categories.index')];
     }
 
     public static function updateCategory($id, array $data)
     {
-        return DB::transaction(function () use ($id, $data): Category {
+        DB::transaction(function () use ($id, $data): Category {
             $category= Category::findOrFail($id);
             $category->update($data);
 
-            return $book;
+            return $category;
         });
+
+        return ['url' => route('profile.categories.index')];
     }
 
     public static function deleteCategory($id)

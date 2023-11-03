@@ -1,5 +1,7 @@
 <x-profile title="Новая категория">
-    <form class="form" id="profile-category-create-form">
+    <form class="form" id="profile-category-edit-form">
+        <input type="hidden" name="id" value="{{ $data->id }}" />
+
         <div class="row form-group">
             <div class="col-5">
                 <select class="form-control" name="parent_id" id="">

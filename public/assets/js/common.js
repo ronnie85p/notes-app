@@ -7,6 +7,7 @@ var common = {
         'profile-book-create-form': (event) => common.profile.books.store(event),
         'profile-book-edit-form': (event) => common.profile.books.update(event),
         'profile-category-create-form': (event) => common.profile.categories.store(event),
+        'profile-category-edit-form': (event) => common.profile.categories.update(event),
     },
 
     containers: {
@@ -448,6 +449,15 @@ var common = {
             store(event) {
                 common.form(event.target, (data) => {
                     return http.api.categories.store(data).then(data => {
+                        return data;
+                    });
+                });
+            },
+
+            update(event) {
+                common.form(event.target, (data, options) => {
+                    options.contentType = 'application/json';
+                    return http.api.categories.update(data.get('id'), data, options).then(data => {
                         return data;
                     });
                 });

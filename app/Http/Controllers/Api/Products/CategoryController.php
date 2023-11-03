@@ -31,7 +31,6 @@ class CategoryController extends Controller
     {
         $validated = $request->validated();
 
-        return $this->resource([$validated]);
         return $this->resource(CategoriesHandlerService::createCategory($validated));
     }
 
@@ -46,11 +45,11 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateCategoryRequest $request, string $id)
     {
         $validated = $request->validated();
 
-        return $this->resource(CategoriesHandlerService::updateCategory($id));
+        return $this->resource(CategoriesHandlerService::updateCategory($id, $validated));
     }
 
     /**

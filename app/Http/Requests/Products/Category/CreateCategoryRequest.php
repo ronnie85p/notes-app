@@ -4,6 +4,7 @@ namespace App\Http\Requests\Products\Category;
 
 use Illuminate\Validation\Validator;
 use App\Http\Requests\Products\CategoryRequest;
+use App\Models\Products\Category;
 
 class CreateCategoryRequest extends CategoryRequest
 {
@@ -20,8 +21,12 @@ class CreateCategoryRequest extends CategoryRequest
         return [
             function (Validator $validator) {
                 $errors = $this->getErrors($validator);
+                $validated = $this->validated();
 
-                
+                if (Category::where('parent_id', $validated['parent_id'])
+                    ->where('name', $validated['name'])->exists()) {
+                    $errors->add('name', 'Такая категория уже существует.');
+                }
             }
         ];
     }
