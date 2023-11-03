@@ -1,5 +1,8 @@
 <x-profile title="Настройки">
     <form class="form" id="profile-settings-form">
+        <div class="form-message alert alert-warning"></div>
+        <div class="form-message alert alert-success" data-type="success"></div>
+
         <div class="row form-group">
             <label class="form-label col-3" for="books_limit_on_page">Кол-во книг на странице</label>
             <div class="col">

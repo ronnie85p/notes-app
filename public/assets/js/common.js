@@ -252,8 +252,9 @@ var common = {
         const data = new FormData(form);
 
         let handlers = {
-            setMessage: (msg) => {
-                const fm = form.querySelector('.form-message');
+            setMessage: (msg, type) => {
+                const selector = type ? `.form-message[data-type="${type}"]` : '.form-message';
+                const fm = form.querySelector(selector);
                 if (!fm) return;
     
                 fm.classList[msg ? 'add': 'remove']('show');
@@ -545,8 +546,9 @@ var common = {
             },
 
             store(event) {
-                common.form(event.target, (data) => {
+                common.form(event.target, (data, options, handlers) => {
                     return http.api.profileSettings.store(data).then(data => {
+                        handlers.setMessage('Настройки сохранены', 'success');
                         return data;
                     });
                 });
