@@ -25,6 +25,11 @@ var common = {
 
         const posterFile = document.getElementById('poster-file');
         common.event(posterFile, 'change', (event) =>  common.handleFile(event));
+
+        const booksFilterForm = document.getElementById('books-filter-form');
+        common.event(booksFilterForm, 'change', () => {
+            window.history.pushState(null)
+        });
     },
 
     initForms() {
