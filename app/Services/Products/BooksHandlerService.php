@@ -11,33 +11,16 @@ use App\Models\Profile\Settings;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class BooksHandlerService 
 {
     public static $uploads_path = 'uploads/books/';
+    public static $storage_in = 'public';
     public static $filename_generated_len = 40;
 
     public static function storage()
     {
-        return Storage::disk('public');
-    }
-
-    public static function generateFileName(string $path = '', string $ext = '')
-    {
-        $path = trim($path, '/') . '/';
-        $filename = Str::random(self::$filename_generated_len) . '.' . $ext;
-        if (self::storage()->exists($path . $filename)) {
-            $filename = self::generateFilename();
-        }
-      
-        return $filename;
-    }
-
-    public static function storeFile($file, string $to)
-    {
-        self::storage()->makeDirectory($to);
-        $file->storeAs(dirname($to), basename($to));
+        return Storage::disk(self::$storage_in);
     }
 
     public static function createBook(array $data, $file)
@@ -88,12 +71,12 @@ class BooksHandlerService
 
     public static function saveFileToBook(Book $book, $file)
     {
-        $uploads_path = self::$uploads_path . $book->isbn . '/thumbs/';
-        $filename = self::generateFileName($uploads_path, $file->extension());
-        self::storeFile($file, $uploads_path . $filename);
+        $uploads_path = self::$uploads_path . $book->isbn . '/thumbs';
 
-        $book->thumbnail_url = $uploads_path . $filename;
-        $book->save();
+        self::storage()->makeDirectory($uploads_path);
+        $path = $file->store($uploads_path, self::$storage_in);
+
+        $book->update(['thumbnail_url' => $path]);
     }
 
     public static function getList(array $params = [])
