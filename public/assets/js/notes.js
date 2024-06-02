@@ -1,21 +1,67 @@
 app.notes = {
     http: {},
 
-    async create(data) {
-        const resp = await this.http.post('', data);
-        const rdata = resp.data.data;
+    redirectTo(uri = '/') {
+        window.location.href = uri;
+    },
 
-        if (rdata.redirect) {
-            window.location.href = rdata.redirect;
+    setMessage(msg) {
+        const el = document.querySelector('#notes-msg');
+        if (!el) return;
+
+        if (msg) {
+            msg = `<div class="alert alert-danger">${msg}</div>`;
+        }
+
+        el.innerHTML = msg;
+    },
+
+    setErrors(errs) {
+        for (let name in errs) {
+            const el = document.querySelector(`[name=${name}]`);
+            if (el) {
+                el.classList.add('is-invalid');
+
+                el.addEventListener('focus', () => {
+                    el.classList.remove('is-invalid');
+                }, false)
+            }
+        }
+    },
+
+    setErrorResponse(response) {
+        if (!response) return;
+        
+        const { data } = response;
+
+        this.setMessage(data.message);
+        this.setErrors(data.errors);
+        
+    },
+
+    async create(data) {
+        try {
+            const resp = await this.http.post('', data);
+            const rdata = resp.data.data;
+    
+            if (rdata.redirect) {
+                this.redirectTo(rdata.redirect)
+            }
+        } catch (e) {
+            this.setErrorResponse(e.response);
         }
     },
 
     async update(data) {
-        const resp = await this.http.put('', data.get('id'), data);
-        const rdata = resp.data.data;
-
-        if (rdata.redirect) {
-            window.location.href = rdata.redirect;
+        try {
+            const resp = await this.http.put('', data.get('id'), data);
+            const rdata = resp.data.data;
+    
+            if (rdata.redirect) {
+                this.redirectTo(rdata.redirect)
+            }
+        } catch (e) {
+            this.setErrorResponse(e.response);
         }
     },
 
@@ -53,7 +99,7 @@ app.notes = {
                     }, false);
                 }
             } else {
-                container.innerHTML = 'Empty list';
+                container.innerHTML = 'Список пуст';
             }
         } catch (e) {
             console.log('err', e)

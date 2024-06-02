@@ -31,14 +31,9 @@
                         от <span class="created-at"></span>
                     </div>
 
-                    <form id="notes-update" method="POST">
+                    <form id="notes-update">
                         <input type="hidden" name="id" value="{{ $id }}">
-
-                        <div class="row mb-2">
-                            <div class="col">
-                                <textarea class="form-control" name="content"></textarea>
-                            </div>
-                        </div>
+                        @include('notes.form')
 
                         <div class="row">
                             <div class="col">

@@ -21,11 +21,14 @@
                                 </div>
 
                                 <div class="card-body">
+                                    <div id="auth-msg"></div>
+
                                     <form id="auth-login">
                                         <div class="row mb-3">
                                             <label class="form-label col-4">Логин</label>
                                             <div class="col">
                                                 <input class="form-control" name="username" autocomplete="off">
+                                                <span class="invalid-feedback"></span>
                                             </div>
                                         </div>
 
@@ -33,6 +36,7 @@
                                             <label class="form-label col-4">Пароль</label>
                                             <div class="col">
                                                 <input class="form-control" name="password" autocomplete="off">
+                                                <span class="invalid-feedback"></span>
                                             </div>
                                         </div>
 

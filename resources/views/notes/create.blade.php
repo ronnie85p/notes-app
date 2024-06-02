@@ -29,11 +29,7 @@
                     <h1 class="h4">Новая заметка</h1>
 
                     <form id="notes-create">
-                        <div class="row mb-2">
-                            <div class="col">
-                                <textarea class="form-control" name="content"></textarea>
-                            </div>
-                        </div>
+                        @include('notes.form')
 
                         <div class="row">
                             <div class="col">

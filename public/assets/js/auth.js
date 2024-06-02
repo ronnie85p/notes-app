@@ -5,11 +5,54 @@ app.auth = {
         window.location.href = uri;
     },
 
-    async login(data) {
-        const resp = await this.http.post('login', data);
-        const rdata = resp.data.data;
+    setMessage(msg) {
+        const el = document.querySelector('#auth-msg');
+        if (!el) return;
 
-        this.redirectTo(rdata.redirect);
+        if (msg) {
+            msg = `<div class="alert alert-danger">${msg}</div>`;
+        }
+
+        el.innerHTML = msg;
+    },
+
+    setErrors(errs) {
+        for (let name in errs) {
+            const el = document.querySelector(`[name=${name}]`);
+            if (el) {
+                el.classList.add('is-invalid');
+
+                el.addEventListener('focus', () => {
+                    el.classList.remove('is-invalid');
+                }, false)
+            }
+        }
+    },
+
+    setErrorResponse(response) {
+        if (!response) return;
+        
+        const { data } = response;
+
+        this.setMessage(data.message);
+        this.setErrors(data.errors);
+        
+    },
+
+    async login(data) {
+
+        this.setMessage('');
+
+        try{
+            const resp = await this.http.post('login', data);
+            const rdata = resp.data.data;
+    
+            this.redirectTo(rdata.redirect);
+
+        } catch (e) {
+            this.setErrorResponse(e.response);
+        }
+
     },
 
     async logout() {
@@ -20,10 +63,19 @@ app.auth = {
     },
 
     async register(data) {
-        const resp = await this.http.post('register', data);
-        const rdata = resp.data.data;
+        this.setMessage('');
 
-        this.redirectTo(rdata.redirect);
+        try {
+
+            const resp = await this.http.post('register', data);
+            const rdata = resp.data.data;
+    
+            this.redirectTo(rdata.redirect);
+
+        } catch (e) {
+            this.setErrorResponse(e.response);
+        }
+
     },
 
     init() {
@@ -44,3 +96,5 @@ app.auth = {
 
     }
 }
+
+app.auth.init();
