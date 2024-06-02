@@ -15,11 +15,9 @@ class RegisterController extends ApiController
 
     function __invoke(RegisterRequest $request)
     {
-        $this->service->register($request->validated());
-
-        return new AuthResource([
-            'redirect' => route('auth.signin')
-        ]);
+        return new AuthResource(
+            $this->service->register($request->validated())
+        );
     }
 }
 

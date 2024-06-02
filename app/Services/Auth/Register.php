@@ -11,10 +11,10 @@ class Register
     /**
      * Метода регистрации пользователя
      * @param array $data
-     * @return void
+     * @return array
      * @throws HttpException
      */
-    public function register(array $data)
+    public function register(array $data): array
     {
         // Cовпадают ли введенные пароли
         self::checkPasswords($data['password'], $data['password_again']);
@@ -26,6 +26,8 @@ class Register
         if (!User::create($data)) {
             throw new HttpException('Произошла непредвиденная ошибка.');
         }
+
+        return ['redirect' => route('auth.signin')];
     }
 
     /**
