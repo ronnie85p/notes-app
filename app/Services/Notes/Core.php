@@ -19,6 +19,7 @@ class Core
     }
 
     /**
+     * Получение записи
      * @param int $id
      * @return array
      */
@@ -30,6 +31,7 @@ class Core
     }
 
     /**
+     * Создание записи
      * @param array $data
      * @return array
      * @throws BadRequestHttpException
@@ -48,6 +50,7 @@ class Core
     }
 
     /**
+     * Обновление записи
      * @param int $id
      * @param array $data
      * @return array
@@ -65,6 +68,7 @@ class Core
     }
 
     /**
+     * Удаление записи
      * @param int $id
      * @return void
      * @throws BadRequestHttpException
