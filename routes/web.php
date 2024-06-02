@@ -16,8 +16,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\Auth;
 use App\Http\Controllers\Web\NotesController;
+use App\Http\Controllers\Web\Profile\SettingsController;
 use App\Http\Middleware\RedirectIfAuthenticated;
-use Illuminate\Support\Facades\Auth as _Auth;
 
 Route::get('/', HomeController::class)->name('home');
 
@@ -28,6 +28,12 @@ Route::prefix('/auth')->group(function() {
     Route::get('/signup', Auth\SignUpController::class)
         ->middleware(RedirectIfAuthenticated::class)
         ->name('auth.signup');
+});
+
+Route::prefix('/profile')->group(function() {
+
+    Route::get('/settings', SettingsController::class);
+
 });
 
 Route::resource('/notes', NotesController::class)
