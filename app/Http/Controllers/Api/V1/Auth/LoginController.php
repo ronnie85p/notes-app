@@ -16,18 +16,16 @@ class LoginController extends ApiController
 
     function __invoke(LoginRequest $request)
     {
-        $this->service->login($request->validated());
-
-        return new AuthResource([
-            'redirect' => route('home')
-        ]);
+        return new AuthResource(
+            $this->service->login($request->validated())
+        );
     }
 
     public function logout(Request $request)
     {
-        $this->service->logout();
-
-        return new AuthResource(null);
+        return new AuthResource(
+            $this->service->logout()
+        );
     }
 }
 

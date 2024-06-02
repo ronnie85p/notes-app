@@ -13,18 +13,16 @@ class NotesController extends ApiController
 {
     function __construct(
         private NotesService $service,
-    ) {
-        $this->resourceClass = NotesResource::class;
-    }
+    ) { }
 
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $list = $this->service->getList($request->query());
-
-        return NotesResource::collection($list);
+        return NotesResource::collection(
+            $this->service->getList($request->query())
+        );
     }
 
     /**
@@ -32,12 +30,9 @@ class NotesController extends ApiController
      */
     public function store(StoreRequest $request)
     {
-        $item = $this->service->create($request->validated());
-
-        return new NotesResource([
-            'redirect' => route('home'),
-            'item' => $item
-        ]);
+        return new NotesResource(
+            $this->service->create($request->validated())
+        );
     }
 
     /**
@@ -45,9 +40,9 @@ class NotesController extends ApiController
      */
     public function show(string $id)
     {
-        $item = $this->service->getItem($id);
-
-        return new NotesResource($item);
+        return new NotesResource(
+            $this->service->getItem($id)
+        );
     }
 
     /**
@@ -55,11 +50,9 @@ class NotesController extends ApiController
      */
     public function update(UpdateRequest $request, string $id)
     {
-        $this->service->update($id, $request->all());
-
-        return new NotesResource([
-            'redirect' => route('home')
-        ]);
+        return new NotesResource(
+            $this->service->update($id, $request->all())
+        );
     }
 
     /**
@@ -67,8 +60,8 @@ class NotesController extends ApiController
      */
     public function destroy(string $id)
     {
-        $this->service->delete($id);
-
-        return new NotesResource(null);
+        return new NotesResource(
+            $this->service->delete($id)
+        );
     }
 }

@@ -21,9 +21,14 @@ use Illuminate\Support\Facades\Auth as _Auth;
 
 Route::get('/', HomeController::class)->name('home');
 
-Route::get('/auth/signin', Auth\SignInController::class)
-    ->middleware(RedirectIfAuthenticated::class)->name('auth.signin');
-Route::get('/auth/signup', Auth\SignUpController::class)
-    ->middleware(RedirectIfAuthenticated::class)->name('auth.signup');
+Route::prefix('/auth')->group(function() {
+    Route::get('/signin', Auth\SignInController::class)
+        ->middleware(RedirectIfAuthenticated::class)
+        ->name('auth.signin');
+    Route::get('/signup', Auth\SignUpController::class)
+        ->middleware(RedirectIfAuthenticated::class)
+        ->name('auth.signup');
+});
 
-Route::resource('/notes', NotesController::class)->except(['store', 'index', 'destroy', 'show']);
+Route::resource('/notes', NotesController::class)
+    ->except(['store', 'index', 'destroy', 'show']);
