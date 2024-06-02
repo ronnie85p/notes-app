@@ -52,6 +52,4 @@ $response = $kernel->handle(
     $request = Request::capture()
 )->send();
 
-
-$app->loadEnvironmentFrom('.env.development');
 $kernel->terminate($request, $response);

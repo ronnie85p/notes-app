@@ -13,21 +13,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-use App\Http\Controllers\WebController;
-use App\Http\Controllers\Products\BookController;
-use App\Http\Controllers\Profile\CategoryController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Web\HomeController;
+use App\Http\Controllers\Web\Auth;
+use App\Http\Controllers\Web\NotesController;
+use App\Http\Middleware\RedirectIfAuthenticated;
+use Illuminate\Support\Facades\Auth as _Auth;
 
-require_once __DIR__ . '/web/auth.php';
-require_once __DIR__ . '/web/profile.php';
+Route::get('/', HomeController::class)->name('home');
 
+Route::get('/auth/signin', Auth\SignInController::class)
+    ->middleware(RedirectIfAuthenticated::class)->name('auth.signin');
+Route::get('/auth/signup', Auth\SignUpController::class)
+    ->middleware(RedirectIfAuthenticated::class)->name('auth.signup');
 
-// home
-Route::get('/', [WebController::class, 'index'])->name('home');
-
-
-// feedback
-Route::get('/feedback', [WebController::class, 'feedback'])->name('feedback');
-
-// books
-Route::resource('/books', BookController::class);
+Route::resource('/notes', NotesController::class)->except(['store', 'index', 'destroy', 'show']);

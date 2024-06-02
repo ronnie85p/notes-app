@@ -1,64 +1,42 @@
-const http = {
-    csrf_token: null,
+app.Http = function (options) {
+    this.options = {
+        prefixUri: '',
+        ...options
+    };
 
-    getCSRFToken() {
-        if (!this.csrf_token) {
-            this.csrf_token = document
-            .querySelector("meta[name='csrf-token']")
-            ?.getAttribute("content");
-        }
+    this.prefixUri = this.options.prefixUri || '';
+    
+    this.get = function (uri, options = {}) {
+        return axios.get(this.prefixUri + uri, options);
+    };
 
-        return this.csrf_token;
-    },
-
-    getUrl() {
-        return new URL(window.location.href);
-    },
-
-    getSearchParams() {
-        return this.getUrl().searchParams;
-    },
-
-    request(method, url, data, options = {}) {
-        switch (method) {
-            case 'put':
-            case 'post':
-
-                if (data instanceof FormData) {
-                    options.contentType = 'multipart/form-data';
-                }
-
-                break;
-        }
-
-        const _options = {
-            method,
-            data,
-            responseType: "json",
+    this.post = function (uri, data, options = {}) {
+        options = {
             headers: {
-                "Content-Type": options.contentType || "application/json",
-                "X-CSRF-TOKEN": this.getCSRFToken(),
+                'Content-Type': 'multipart/form-data'
             },
             ...options
         };
-        console.log('_options', _options)
-        return axios(url, _options)
-            .then(response => response.data);
-    },
 
-    delete(url, options = {}) {
-        return this.request('DELETE', url, options);
-    },
+        return axios.post(this.prefixUri + uri, data, options);
+    };
 
-    post(url, data, options = {}) {
-        return this.request('POST', url, data, options);
-    },
+    this.put = function(uri, id, data, options = {}) {
+        options = {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            ...options
+        };
 
-    put(url, data, options = {}) {
-        return this.request('PUT', url, data, options)
-    },
+        data.set('_method', 'PUT');
 
-    get(url, options = {}) {
-        return this.request('GET', url, null, options);
-    }
-};
+        return this.post(uri + `/${id}`, data, options);
+    };
+
+    this.delete = function(uri, id, options = {}) {
+        return axios.delete(this.prefixUri + uri + `/${id}`, options);
+    };
+
+    return this;
+}
