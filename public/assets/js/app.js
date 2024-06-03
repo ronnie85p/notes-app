@@ -5,7 +5,7 @@ window.app = {
     getCSRFToken() {
         if (!this.csrf_token) {
             this.csrf_token = document
-            .querySelector("meta[name='csrf-token']")
+            .querySelector("meta[name='csrf']")
             ?.getAttribute("content");
         }
 

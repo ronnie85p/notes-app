@@ -21,11 +21,12 @@
                         <div class="col">
                             @include('chunks.profile.title', ['title' => 'Профиль', 'subtitle' => 'Редактирование'])
 
-                            <form>
+                            <form onsubmit="app.profile.update(event)">
                                 <div class="row mb-2">
                                     <label class="col-2" for="fullname">Полное имя</label>
                                     <div class="col">
-                                        <input class="form-control" name="" value="{{ $user->fullname }}">
+                                        <input class="form-control" name="fullname" value="{{ $user->fullname }}">
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
 
