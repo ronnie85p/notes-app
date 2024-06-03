@@ -1,3 +1,5 @@
+let form_errors = {};
+
 app.Form = function(formElement, options = {}) {
     this.options = {
         url: '',
@@ -8,19 +10,20 @@ app.Form = function(formElement, options = {}) {
 
     this.formElement = formElement;
 
-    this.init = () => {
-        return this;
-    }
-
-    this.submit = (event) => {
+    this.submit = async (event) => {
         this.preventEvent(event);
 
-        try {
-            return axios(this.getRequestOptions())
-                .then(response => response.data);
-        } catch (error) {
-            console.log('error', error)
-        }
+        this.resetErrors();
+
+        return await axios(this.getRequestOptions())
+                .then(response => response.data)
+                .catch(error => {
+                    if (error.response) {
+                        this.setErrors(error.response.data.errors);
+                    }
+
+                    throw error;
+                })
     }
 
     this.getRequestOptions = () => {
@@ -82,6 +85,10 @@ app.Form = function(formElement, options = {}) {
         field.classList.add(`is-${status}`);
     }
 
+    this.removeFieldStatus = (field, status) => {
+        field.classList.remove(`is-${status}`);
+    }
+
     this.getFieldFeedback = (field, status) => {
         let parent = this.getFieldParent(field);
         if (!parent) return null;
@@ -93,20 +100,52 @@ app.Form = function(formElement, options = {}) {
         let feedback = this.getFieldFeedback(field, status);
         if (!feedback) return;
   
+        feedback.innerHTML = '';
         for (let i in messages) {
             feedback.insertAdjacentHTML('BEFOREEND', `<div>${messages[i]}</div>`);
         }
     }
 
+    this.removeFieldMessages = (field, status) => {
+        let feedback = this.getFieldFeedback(field, status);
+        if (feedback) feedback.innerHTML = '';
+    }
+ 
+    this.resetErrors = () => {
+        for (let name in form_errors) {
+            let field = this.getField(name);
+            if (!field) continue;
+
+            this.removeFieldStatus(field, 'invalid');
+            this.removeFieldMessages(field, 'invalid');
+        }
+
+        form_errors = {};
+    }
+
     this.setErrors = (errors) => {
-        for (let name in errors) { console.log('name', name)
+        for (let name in errors) { 
             let field = this.getField(name);
             if (!field) continue;
 
             this.setFieldStatus(field, 'invalid');
             this.setFieldMessages(field, errors[name], 'invalid')
+
+            form_errors[name] = {
+                msgs: errors[name],
+                field
+            }
+        }
+
+        for (let name in form_errors) {
+            let obj = form_errors[name];
+
+            obj.field.addEventListener('input', () => {
+                this.removeFieldStatus(obj.field, 'invalid');
+                this.removeFieldMessages(obj.field, 'invalid')
+            }, false);
         }
     }
 
-    return this.init();
+    return this;
 }
