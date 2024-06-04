@@ -31,7 +31,7 @@
                         от <span class="created-at"></span>
                     </div>
 
-                    <form id="notes-update">
+                    <form onsubmit="app.notes.update(event, '{{ $id }}')">
                         <input type="hidden" name="id" value="{{ $id }}">
                         @include('notes.form')
 

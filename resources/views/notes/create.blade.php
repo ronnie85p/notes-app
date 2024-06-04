@@ -28,7 +28,7 @@
 
                     <h1 class="h4">Новая заметка</h1>
 
-                    <form id="notes-create">
+                    <form onsubmit="app.notes.create(event)">
                         @include('notes.form')
 
                         <div class="row">

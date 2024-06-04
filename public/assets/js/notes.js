@@ -1,83 +1,25 @@
 app.notes = {
-    http: {},
-
-    redirectTo(uri = '/') {
-        window.location.href = uri;
-    },
-
-    setMessage(msg) {
-        const el = document.querySelector('#notes-msg');
-        if (!el) return;
-
-        if (msg) {
-            msg = `<div class="alert alert-danger">${msg}</div>`;
-        }
-
-        el.innerHTML = msg;
-    },
-
-    setErrors(errs) {
-        for (let name in errs) {
-            const el = document.querySelector(`[name=${name}]`);
-            if (el) {
-                el.classList.add('is-invalid');
-
-                el.addEventListener('focus', () => {
-                    el.classList.remove('is-invalid');
-                }, false)
-            }
-        }
-    },
-
-    setErrorResponse(response) {
-        if (!response) return;
-        
-        const { data } = response;
-
-        this.setMessage(data.message);
-        this.setErrors(data.errors);
-        
-    },
-
     async create(event) {
         (new app.Form(event.target, {
             url: '/api/v1/notes',
             method: 'POST',
         })).submit(event);
-
-        try {
-            const resp = await this.http.post('', data);
-            const rdata = resp.data.data;
-    
-            if (rdata.redirect) {
-                this.redirectTo(rdata.redirect)
-            }
-        } catch (e) {
-            this.setErrorResponse(e.response);
-        }
     },
 
-    async update(data) {
-        try {
-            const resp = await this.http.put('', data.get('id'), data);
-            const rdata = resp.data.data;
-    
-            if (rdata.redirect) {
-                this.redirectTo(rdata.redirect)
-            }
-        } catch (e) {
-            this.setErrorResponse(e.response);
-        }
+    async update(event, id) {
+        (new app.Form(event.target, {
+            url: `/api/v1/notes/${id}`,
+            method: 'PUT',
+        })).submit(event);
     },
 
-    async delete(data) {
-        try {
-            const resp = await this.http.delete('', data.get('id'));
-
+    async delete(event, id) {
+        (new app.Form(event.target, {
+            url: `/api/v1/notes/${id}`,
+            method: 'DELETE',
+        })).submit(event).then(response => {
             this.getList();
-        } catch (e) {
-            console.log('err', e)
-        }
+        });
     },
 
     async getList() {
@@ -93,15 +35,6 @@ app.notes = {
             if (items?.length) {
                 for (let i in items) {
                     container.insertAdjacentHTML('BEFOREEND', this.buildListRow(items[i]));
-                }
-
-                const actionForms = document.querySelectorAll('.notes-item-delete');
-                for (let form of actionForms) {
-                    form.addEventListener('submit', (e) => {
-                        e.preventDefault();
-
-                        this.delete(new FormData(form));
-                    }, false);
                 }
             } else {
                 container.innerHTML = 'Список пуст';
@@ -135,7 +68,7 @@ app.notes = {
                         </div>
 
                         <div class="col text-end">
-                            <form class="notes-item-delete">
+                            <form onsubmit="app.notes.delete(event, '${item['id']}')">
                                 <input type="hidden" name="id" value="${item['id']}">
 
                                 <button class="btn btn-sm btn-outline-danger">
@@ -159,26 +92,7 @@ app.notes = {
     },
 
     init() {
-        this.http = new app.Http({
-            prefixUri: '/api/v1/notes'
-        });
-
-        const typeForms = document.querySelectorAll('#notes-create, #notes-update');
-        console.log('typeForms', typeForms)
-        for (const form of typeForms) {
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-
-                this[form.getAttribute('id').replace('notes-', '')](new FormData(e.target));
-            }, false);   
-        }
-
         this.getList();
-
-        const editContainer = document.getElementById('notes-edit');
-        if (editContainer) {
-            this.getItem(editContainer, editContainer.dataset.id);
-        }
     }
 };
 
