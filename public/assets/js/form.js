@@ -6,10 +6,15 @@ app.Form = function(formElement, options = {}) {
         method: 'POST',
         contentType: 'multipart/form-data',
         handleResponseErrors: true,
+        submitterMuted: true,
+        // feedbackErrorTpl: `<div class="alert alert-danger"></div>`,
+        // feedbackSuccessTpl: `<div class="alert alert-success"></div>`,
+        // feedbackWarningTpl: `<div class="alert alert-warning"></div>`,
         ...options
     };
 
     this.formElement = formElement;
+    this.formFeedback = formElement.querySelector('.form-feedback');
 
     /**
      * Отправить запрос
@@ -19,17 +24,32 @@ app.Form = function(formElement, options = {}) {
      */
     this.submit = (event) => {
         this.preventEvent(event);
+        this.setFeedback('');
         this.resetErrors();
+
+        const submitter = this.getSubmitter(event);
+        submitter.disabled();
 
         return axios(this.getRequestOptions())
                 .then(response => response.data)
                 .catch(error => {
                     if (this.options.handleResponseErrors === true && error.response) {
-                        this.setErrors(error.response.data.errors);
+                        const { errors, message } = error.response.data;
+                        this.setFeedback(message, 'danger');
+                        this.setErrors(errors);
                     }
 
                     throw error;
                 })
+                .finally(() => {
+                    submitter.disabled(false);
+                });
+    }
+
+    this.setFeedback = (msg, type) => {
+        this.formFeedback.innerHTML = msg 
+            ? `<div class="alert alert-${type}">${msg}</div>` 
+            : '';
     }
 
     /**
@@ -95,6 +115,19 @@ app.Form = function(formElement, options = {}) {
     this.preventEvent = (event) => {
         event.preventDefault();
     };
+
+    this.getSubmitter = (event) => {
+        const submitter = event.submitter;
+        const submitterMuted = this.options.submitterMuted === true;
+
+        return {
+            disabled(disabled = true) {
+                if (submitterMuted) {
+                    submitter.disabled = disabled;
+                }
+            }
+        }
+    }
 
     /**
      * Получить поле по имени
