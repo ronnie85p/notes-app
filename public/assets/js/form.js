@@ -5,20 +5,26 @@ app.Form = function(formElement, options = {}) {
         url: '',
         method: 'POST',
         contentType: 'multipart/form-data',
+        handleResponseErrors: true,
         ...options
     };
 
     this.formElement = formElement;
 
-    this.submit = async (event) => {
+    /**
+     * Отправить запрос
+     * 
+     * @param {*} event 
+     * @returns 
+     */
+    this.submit = (event) => {
         this.preventEvent(event);
-
         this.resetErrors();
 
-        return await axios(this.getRequestOptions())
+        return axios(this.getRequestOptions())
                 .then(response => response.data)
                 .catch(error => {
-                    if (error.response) {
+                    if (this.options.handleResponseErrors === true && error.response) {
                         this.setErrors(error.response.data.errors);
                     }
 
@@ -26,6 +32,11 @@ app.Form = function(formElement, options = {}) {
                 })
     }
 
+    /**
+     * Получить конфигурацию для запроса
+     * 
+     * @returns 
+     */
     this.getRequestOptions = () => {
         return {
             url: this.options.url,
@@ -37,6 +48,11 @@ app.Form = function(formElement, options = {}) {
         };
     }
 
+    /**
+     * Получить метод запроса
+     * 
+     * @returns 
+     */
     this.getRequestMethod = () => {
         let method = this.options.method.toUpperCase();
         if (method == 'PUT') {
@@ -46,6 +62,11 @@ app.Form = function(formElement, options = {}) {
         return method;
     };
 
+    /**
+     * Получить данные формы
+     * 
+     * @returns 
+     */
     this.getFormData = () => {
         let data = new FormData(this.formElement);
         if (this.options.method.toUpperCase() == 'PUT') {
@@ -57,38 +78,87 @@ app.Form = function(formElement, options = {}) {
         return data;
     }
 
+    /**
+     * Получить csrf токен
+     */
     this.getCsrfToken = () => {
         return document
             .querySelector("meta[name='csrf']")
             ?.getAttribute("content");
     },
 
-    this.handleEvent = (event) => {
-        if (this.options.preventEvent === true) {
-            this.preventEvent(event);
-        }
-    }
-
+    /**
+     * Предотвратить выполнение события по умолчанию
+     * 
+     * @param {*} event 
+     */
     this.preventEvent = (event) => {
         event.preventDefault();
     };
 
+    /**
+     * Получить поле по имени
+     * 
+     * @param {*} name 
+     * @returns 
+     */
     this.getField = (name) => {
         return name in this.formElement ? this.formElement[name] : null;
     }
 
+    /**
+     * Получить родителя (контекст) поля
+     * 
+     * @param {*} field 
+     * @returns 
+     */
     this.getFieldParent = (field) => {
         return field.closest('.form-group') || field.parentNode;
     }
 
-    this.setFieldStatus = (field, status) => {
+    /**
+     * Установить статус для поля
+     * 
+     * @param {*} field 
+     * @param {*} msgs 
+     * @param {*} status 
+     */
+    this.setFieldStatus = (field, msgs, status) => {
         field.classList.add(`is-${status}`);
+
+        this.addFieldMessages(field, msgs, status);
     }
 
-    this.removeFieldStatus = (field, status) => {
+    /**
+     * Удалить статус поля, и сообщения, если установлен соответствующий параметр
+     * 
+     * @param {*} field 
+     * @param {*} status 
+     * @param {*} removeMsgs 
+     */
+    this.removeFieldStatus = (field, status, removeMsgs = true) => {
         field.classList.remove(`is-${status}`);
+
+        if (removeMsgs === true) {
+            this.removeFieldMessages(field, status);
+        }
     }
 
+    this.setFieldStatusInvalid = (field, msgs) => {
+        this.setFieldStatus(field, msgs, 'invalid');
+    }
+
+    this.removeFieldStatusInvalid = (field, removeMsgs = true) => {
+        this.removeFieldStatus(field, 'invalid', removeMsgs);
+    }
+
+    /**
+     * Получить фидбэк поля
+     * 
+     * @param {*} field 
+     * @param {*} status 
+     * @returns 
+     */
     this.getFieldFeedback = (field, status) => {
         let parent = this.getFieldParent(field);
         if (!parent) return null;
@@ -96,7 +166,15 @@ app.Form = function(formElement, options = {}) {
         return parent.querySelector(`.${status}-feedback`);
     }
 
-    this.setFieldMessages = (field, messages, status) => {
+    /**
+     * Добавить сообщения в фидбэк поля
+     * 
+     * @param {*} field 
+     * @param {*} messages 
+     * @param {*} status 
+     * @returns 
+     */
+    this.addFieldMessages = (field, messages, status) => {
         let feedback = this.getFieldFeedback(field, status);
         if (!feedback) return;
   
@@ -106,30 +184,44 @@ app.Form = function(formElement, options = {}) {
         }
     }
 
+    /**
+     * Удалить сообщения поля
+     * 
+     * @param {*} field 
+     * @param {*} status 
+     */
     this.removeFieldMessages = (field, status) => {
         let feedback = this.getFieldFeedback(field, status);
         if (feedback) feedback.innerHTML = '';
     }
  
+    /**
+     * Сброс всех сохраненных ошибок
+     * 
+     * @returns
+     */
     this.resetErrors = () => {
         for (let name in form_errors) {
             let field = this.getField(name);
             if (!field) continue;
 
-            this.removeFieldStatus(field, 'invalid');
-            this.removeFieldMessages(field, 'invalid');
+            this.removeFieldStatusInvalid(field);
         }
 
         form_errors = {};
     }
 
+    /**
+     * Установить ошибки полям и сохранить их
+     * 
+     * @param {*} errors 
+     */
     this.setErrors = (errors) => {
         for (let name in errors) { 
             let field = this.getField(name);
             if (!field) continue;
 
-            this.setFieldStatus(field, 'invalid');
-            this.setFieldMessages(field, errors[name], 'invalid')
+            this.setFieldStatusInvalid(field, errors[name]);
 
             form_errors[name] = {
                 msgs: errors[name],
@@ -141,8 +233,7 @@ app.Form = function(formElement, options = {}) {
             let obj = form_errors[name];
 
             obj.field.addEventListener('input', () => {
-                this.removeFieldStatus(obj.field, 'invalid');
-                this.removeFieldMessages(obj.field, 'invalid')
+                this.removeFieldStatusInvalid(obj.field);
             }, false);
         }
     }
