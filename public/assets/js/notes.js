@@ -22,6 +22,48 @@ app.notes = {
         });
     },
 
+
+
+    http: {},
+
+    redirectTo(uri = '/') {
+        window.location.href = uri;
+    },
+
+    setMessage(msg) {
+        const el = document.querySelector('#notes-msg');
+        if (!el) return;
+
+        if (msg) {
+            msg = `<div class="alert alert-danger">${msg}</div>`;
+        }
+
+        el.innerHTML = msg;
+    },
+
+    setErrors(errs) {
+        for (let name in errs) {
+            const el = document.querySelector(`[name=${name}]`);
+            if (el) {
+                el.classList.add('is-invalid');
+
+                el.addEventListener('focus', () => {
+                    el.classList.remove('is-invalid');
+                }, false)
+            }
+        }
+    },
+
+    setErrorResponse(response) {
+        if (!response) return;
+        
+        const { data } = response;
+
+        this.setMessage(data.message);
+        this.setErrors(data.errors);
+        
+    },
+
     async getList() {
         const container = document.getElementById('notes-list');
         if (!container) return;
@@ -92,6 +134,20 @@ app.notes = {
     },
 
     init() {
+        this.http = new app.Http({
+            prefixUri: '/api/v1/notes'
+        });
+
+        const typeForms = document.querySelectorAll('#notes-create, #notes-update');
+      
+        for (const form of typeForms) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                this[form.getAttribute('id').replace('notes-', '')](new FormData(e.target));
+            }, false);   
+        }
+
         this.getList();
     }
 };
