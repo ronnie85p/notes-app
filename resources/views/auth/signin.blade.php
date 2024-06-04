@@ -23,7 +23,9 @@
                                 <div class="card-body">
                                     <div id="auth-msg"></div>
 
-                                    <form id="auth-login">
+                                    <form onsubmit="app.auth.login(event)">
+                                        <div class="form-feedback"></div>
+
                                         <div class="row mb-3">
                                             <label class="form-label col-4">Логин</label>
                                             <div class="col">

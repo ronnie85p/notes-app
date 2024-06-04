@@ -13,7 +13,7 @@
                 <div class="container">
 
                     <div class="row mt-5">
-                        <div class="col-5 m-auto">
+                        <div class="col-6 m-auto">
 
                             <div class="card shadow">
                                 <div class="card-header">
@@ -23,10 +23,11 @@
                                 <div class="card-body">
                                     <div id="auth-msg"></div>
 
-                                    <form id="auth-register">
+                                    <form onsubmit="app.auth.register(event)">
+                                        <div class="form-feedback"></div>
                                         
                                         <div class="row mb-3">
-                                            <label class="form-label col-4">Имя</label>
+                                            <label class="form-label col-5">Имя</label>
                                             <div class="col">
                                                 <input class="form-control" name="fullname" autocomplete="off">
                                                 <span class="invalid-feedback"></span>
@@ -34,7 +35,7 @@
                                         </div>
 
                                         <div class="row mb-3">
-                                            <label class="form-label col-4">Логин</label>
+                                            <label class="form-label col-5">Логин</label>
                                             <div class="col">
                                                 <input class="form-control" name="username" autocomplete="off">
                                                 <span class="invalid-feedback"></span>
@@ -42,23 +43,23 @@
                                         </div>
 
                                         <div class="row mb-3">
-                                            <label class="form-label col-4">Пароль</label>
+                                            <label class="form-label col-5">Пароль</label>
                                             <div class="col">
-                                                <input class="form-control" name="password" autocomplete="off">
+                                                <input class="form-control" name="password" type="password" autocomplete="off">
                                                 <span class="invalid-feedback"></span>
                                             </div>
                                         </div>
 
                                         <div class="row mb-3">
-                                            <label class="form-label col-4">Повторите пароль</label>
+                                            <label class="form-label col-5">Повторите пароль</label>
                                             <div class="col">
-                                                <input class="form-control" name="password_again" autocomplete="off">
+                                                <input class="form-control" name="password_again" type="password" autocomplete="off">
                                                 <span class="invalid-feedback"></span>
                                             </div>
                                         </div>
 
                                         <div class="row">
-                                            <div class="col-4"></div>
+                                            <div class="col-5"></div>
                                             <div class="col text-end">
                                                 <button class="btn btn-primary">Зарегистрироваться</button>
                                             </div>

@@ -29,13 +29,6 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function update(UpdateRequest $request)
-    {
-        return response()->json([
-            'success' => 'Ok'
-        ]);
-    }
-
     public function editPassword()
     {
         return view('profile.editpassword', [

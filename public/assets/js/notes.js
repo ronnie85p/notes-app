@@ -39,7 +39,12 @@ app.notes = {
         
     },
 
-    async create(data) {
+    async create(event) {
+        (new app.Form(event.target, {
+            url: '/api/v1/notes',
+            method: 'POST',
+        })).submit(event);
+
         try {
             const resp = await this.http.post('', data);
             const rdata = resp.data.data;

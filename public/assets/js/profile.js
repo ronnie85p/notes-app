@@ -1,7 +1,7 @@
 app.profile = {
     async update(event) {
         const form = new app.Form(event.target, {
-            url: '/profile',
+            url: '/api/v1/profile',
             method: 'PUT',
         });
 
@@ -14,29 +14,33 @@ app.profile = {
         console.log('response', resp);
     },
 
-    delete(event) {
+    async delete(event) {
         const form = new app.Form(event.target, {
-            url: '/profile',
+            url: '/api/v1/profile',
             method: 'DELETE',
         });
 
-        console.log('deleting...');
+        console.log('updating...');
 
-        form.submit(event).then(response => {
-            console.log('response', response)
+        const resp = await form.submit(event).catch(error => {
+            throw error;
         });
+
+        console.log('response', resp);
     },
 
-    updatePassword(event) {
+    async updatePassword(event) {
         const form = new app.Form(event.target, {
-            url: '/profile/password',
+            url: '/api/v1/profile/password',
             method: 'PUT',
         });
 
         console.log('updating...');
 
-        form.submit(event).then(response => {
-            console.log('response', response)
+        const resp = await form.submit(event).catch(error => {
+            throw error;
         });
+
+        console.log('response', resp);
     }
 };

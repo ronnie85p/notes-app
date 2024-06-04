@@ -21,8 +21,10 @@
                         <div class="col">
                             @include('chunks.profile.title', ['title' => 'Профиль'])
 
-                            <p class="lead">Ваши данные:</p>
-                            <p><b>Полное имя</b>: {{ $user->fullname }}</p><hr />
+                            <p><b>Логин</b>: {{ $user->username }}</p>
+                            <p><b>Полное имя</b>: {{ $user->fullname }}</p>
+                            <p class="text-muted">Дата регистрации: {{ $user->created_at }}</p>
+                            <hr />
                             <a href="{{ route('profile.edit') }}">Редактировать</a>
                         </div>
                     </div>

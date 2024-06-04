@@ -28,11 +28,25 @@ app.Form = function(formElement, options = {}) {
 
         return axios(this.getRequestOptions())
                 .then(response => response.data)
+                .then(response => {
+                    if (response.data?.message) {
+                        this.setFeedback(response.data.message, 'success')
+                    }
+
+                    if (response.data?.redirect) {
+                        window.location.href = response.data.redirect;
+                    }
+
+                    return response;
+                })
                 .catch(error => {
-                    if (this.options.handleResponseErrors === true && error.response) {
+                    if (error.response) {
                         const { errors, message } = error.response.data;
                         this.setFeedback(message, 'danger');
-                        this.setErrors(errors);
+
+                        if (this.options.handleResponseErrors === true) {
+                            this.setErrors(errors);
+                        }
                     }
 
                     throw error;
