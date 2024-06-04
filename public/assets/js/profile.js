@@ -3,7 +3,6 @@ app.profile = {
         const form = new app.Form(event.target, {
             url: '/profile',
             method: 'PUT',
-            submitterMuted: false
         });
 
         console.log('updating...');

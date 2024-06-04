@@ -7,6 +7,7 @@ app.Form = function(formElement, options = {}) {
         contentType: 'multipart/form-data',
         handleResponseErrors: true,
         submitterMuted: true,
+        feedbackTpl: '<div class="alert alert-{type}">{message}</div>',
         // feedbackErrorTpl: `<div class="alert alert-danger"></div>`,
         // feedbackSuccessTpl: `<div class="alert alert-success"></div>`,
         // feedbackWarningTpl: `<div class="alert alert-warning"></div>`,
@@ -23,12 +24,7 @@ app.Form = function(formElement, options = {}) {
      * @returns 
      */
     this.submit = (event) => {
-        this.preventEvent(event);
-        this.setFeedback('');
-        this.resetErrors();
-
-        const submitter = this.getSubmitter(event);
-        submitter.disabled();
+        this.beforeSubmit(event);
 
         return axios(this.getRequestOptions())
                 .then(response => response.data)
@@ -42,13 +38,51 @@ app.Form = function(formElement, options = {}) {
                     throw error;
                 })
                 .finally(() => {
-                    submitter.disabled(false);
+                    this.afterSubmit();
                 });
     }
 
-    this.setFeedback = (msg, type) => {
+    /**
+     * Обработать код до отправки запроса
+     * 
+     * @param {*} event 
+     */
+    this.beforeSubmit = (event) => {
+        this.preventEvent(event);
+        this.setFeedback('');
+        this.resetErrors();
+
+        this.submitter = this.getSubmitter(event);
+        this.submitter.disabled();
+
+        this.formElement.style.pointerEvents = 'none';
+        // this.formElement.style.opacity = .8;
+    }
+
+    /**
+     * Обработать код после отправки запроса
+     */
+    this.afterSubmit = () => {
+        this.submitter.disabled(false);
+
+        this.formElement.style.pointerEvents = '';
+        // this.formElement.style.opacity = '';
+    }
+
+    /**
+     * Установить фидбэк для формы
+     * 
+     * @param {*} msg 
+     * @param {*} type 
+     * @returns 
+     */
+    this.setFeedback = (msg, type = 'default') => {
+        if (!this.formFeedback) return;
+
         this.formFeedback.innerHTML = msg 
-            ? `<div class="alert alert-${type}">${msg}</div>` 
+            ? this.options.feedbackTpl
+                .replace('{type}', type)
+                .replace('{message}', msg)
             : '';
     }
 
