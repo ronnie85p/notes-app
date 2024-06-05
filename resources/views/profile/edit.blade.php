@@ -1,6 +1,6 @@
-<x-profile.layout>
-    <x-slot:title>Профиль</x-slot:title>
-    <x-slot:subtitle>Редактирование</x-slot:subtitle>
+<x-profile.layout
+    title="Профиль"
+    subtitle="Редактирование">
 
     <form onsubmit="app.profile.update(event)">
         <div class="form-feedback"></div>

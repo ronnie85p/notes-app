@@ -1,5 +1,5 @@
-<x-profile.layout>
-    <x-slot:title>Изменить пароль</x-slot:title>
+<x-profile.layout 
+    title="Изменить пароль">
 
     <form onsubmit="app.profile.updatePassword(event)">
         <div class="form-feedback"></div>

@@ -1,5 +1,5 @@
-<x-profile.layout>
-    <x-slot:title>Профиль</x-slot:title>
+<x-profile.layout 
+    title="Профиль">
 
     <p><b>Логин</b>: {{ $user->username }}</p>
     <p><b>Полное имя</b>: {{ $user->fullname }}</p>
