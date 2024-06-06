@@ -1,46 +1,22 @@
 app.profile = {
     async update(event) {
-        const form = new app.Form(event.target, {
-            url: '/api/v1/profile',
+        (new app.Form(event.target, {
+            resource: 'profile',
             method: 'PUT',
-        });
-
-        console.log('updating...');
-
-        const resp = await form.submit(event).catch(error => {
-            throw error;
-        });
-
-        console.log('response', resp);
+        })).submit(event);
     },
 
     async delete(event) {
-        const form = new app.Form(event.target, {
-            url: '/api/v1/profile',
+        (new app.Form(event.target, {
+            resource: 'profile',
             method: 'DELETE',
-        });
-
-        console.log('updating...');
-
-        const resp = await form.submit(event).catch(error => {
-            throw error;
-        });
-
-        console.log('response', resp);
+        })).submit(event);
     },
 
     async updatePassword(event) {
-        const form = new app.Form(event.target, {
-            url: '/api/v1/profile/password',
+        (new app.Form(event.target, {
+            resource: 'profile/password',
             method: 'PUT',
-        });
-
-        console.log('updating...');
-
-        const resp = await form.submit(event).catch(error => {
-            throw error;
-        });
-
-        console.log('response', resp);
+        })).submit(event);
     }
 };
