@@ -14,11 +14,15 @@ app.notes = {
     },
 
     delete(event, id) {
+        if (!confirm('Удалить заметку?')) {
+            return;
+        }
+
         (new app.Form(event.target, {
             resource: `notes/${id}`,
             method: 'DELETE',
         })).submit(event).then(response => {
-            this.getList();
+            this.loadList();
         });
     },
 
