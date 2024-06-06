@@ -1,10 +1,4 @@
-<x-page.layout>
-    <x-slot:title>Заметка | редактирование</x-slot:title>
-    <x-slot:pagetitle>Заметка</x-slot:pagetitle>
-    <x-slot:subtitle>
-        от <span class="created-at"></span>
-    </x-slot:subtitle>
-
+<x-layout>
     <x-slot:navbar>
         <li class="nav-item">
             <a class="nav-link" href="{{ route('home') }}">
@@ -18,15 +12,6 @@
     </x-slot:navbar>
 
     <form onsubmit="app.notes.update(event, '{{ $id }}')">
-        <input type="hidden" name="id" value="{{ $id }}">
-        @include('notes.form')
-
-        <div class="row">
-            <div class="col">
-                <button class="btn btn-primary">
-                    Сохранить
-                </button>
-            </div>
-        </div>
+        {{ $slot }}
     </form>
-</x-page.layout>
+</x-layout>
