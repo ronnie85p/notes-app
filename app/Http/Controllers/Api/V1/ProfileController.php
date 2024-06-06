@@ -7,7 +7,8 @@ use App\Http\Requests\Profile\UpdateRequest;
 use App\Http\Requests\Profile\DeleteRequest;
 use App\Http\Requests\Profile\UpdatePasswordRequest;
 use App\Http\Resources\ProfileResource;
-use App\Services\Profile\Core as ProfileService;
+use App\Services\Profile\ProfileService;
+use Illuminate\Auth\Authenticatable;
 
 class ProfileController extends Controller
 {
@@ -18,21 +19,21 @@ class ProfileController extends Controller
     public function update(UpdateRequest $request)
     {
         return new ProfileResource(
-            $this->service->update($request->validated())
+            $this->service->update($request->user(), $request->validated())
         );
     }
 
     public function delete(DeleteRequest $request)
     {
         return new ProfileResource(
-            $this->service->delete()
+            $this->service->delete($request->user())
         );
     }
 
     public function updatePassword(UpdatePasswordRequest $request) 
     {
         return new ProfileResource(
-            $this->service->updatePassword($request->validated())
+            $this->service->updatePassword($request->user(), $request->validated())
         );
     }
 }

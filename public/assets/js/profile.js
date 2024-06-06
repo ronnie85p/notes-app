@@ -7,6 +7,12 @@ app.profile = {
     },
 
     async delete(event) {
+        event.preventDefault();
+
+        if (!confirm('Удалить профиль?')) {
+            return;
+        }
+
         (new app.Form(event.target, {
             resource: 'profile',
             method: 'DELETE',

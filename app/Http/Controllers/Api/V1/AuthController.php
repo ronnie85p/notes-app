@@ -7,7 +7,7 @@ use App\Http\Controllers\ApiController;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\AuthResource;
-use App\Services\Auth\Login as LoginService;
+use App\Services\Auth\LoginService;
 
 class AuthController extends ApiController
 {

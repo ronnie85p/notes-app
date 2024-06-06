@@ -12,6 +12,8 @@
         <a href="{{ route('profile.editpassword') }}" class="{{ $active == 'profile.editpassword' ? 'fw-bolder' : '' }}">Изменить пароль</a>
     </li>
     <li class="list-group-item">
-        <a href="#" class="text-danger">Удалить профиль</a>
+        <form onsubmit="app.profile.delete(event)">
+            <button class="text-danger btn btn-link p-0 text-decoration-none">Удалить профиль</button>
+        </form>
     </li>
 </ul>
