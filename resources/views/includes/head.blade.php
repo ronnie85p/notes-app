@@ -10,7 +10,6 @@
 <script src="/assets/js/vendor/axios.min.js"></script>
 <script src="/assets/js/app.js"></script>
 <script src="/assets/js/form.js"></script>
-<!-- <script src="/assets/js/http.js"></script> -->
 <script src="/assets/js/api-http.js"></script>
 <script src="/assets/js/auth.js" defer></script>
 <script src="/assets/js/notes.js" defer></script>
