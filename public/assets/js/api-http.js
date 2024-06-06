@@ -1,7 +1,6 @@
 app.apiHttp = {
     ver: 1,
     path: '/api',
-    csrfToken: null,
 
     defaultOptions: {
         url: '',
@@ -78,18 +77,18 @@ app.apiHttp = {
     },
 
     get(uri, options) {
-        return this.request(uri, { method: 'GET', ...options });
+        return this.request(uri, { ...options, method: 'GET' });
     },
 
     put(uri, options) {
-        return this.request(uri, { method: 'PUT', ...options });
+        return this.request(uri, { ...options, method: 'PUT' });
     },
 
     post(uri, options) {
-        return this.request(uri, { method: 'POST', ...options });
+        return this.request(uri, { ...options, method: 'POST' });
     },
 
     delete(uri, options) {
-        return this.request(uri, { method: 'DELETE', ...options });
+        return this.request(uri, { ...options, method: 'DELETE' });
     },
 };

@@ -1,19 +1,19 @@
 app.notes = {
-    create(event) {
+    async create(event) {
         (new app.Form(event.target, {
             resource: 'notes',
             method: 'POST',
         })).submit(event);
     },
 
-    update(event, id) {
+    async update(event, id) {
         (new app.Form(event.target, {
             resource: `notes/${id}`,
             method: 'PUT',
         })).submit(event);
     },
 
-    delete(event, id) {
+    async delete(event, id) {
         if (!confirm('Удалить заметку?')) {
             return;
         }
@@ -26,11 +26,11 @@ app.notes = {
         });
     },
 
-    getItem(id) {
+    async getItem(id) {
         return app.apiHttp.get(`notes/${id}`);   
     },
 
-    getList() {
+    async getList() {
         return app.apiHttp.get('notes');
     },
 
