@@ -1,25 +1,36 @@
 app.notes = {
-    async create(event) {
+    create(event) {
         (new app.Form(event.target, {
             url: '/api/v1/notes',
             method: 'POST',
         })).submit(event);
     },
 
-    async update(event, id) {
+    update(event, id) {
         (new app.Form(event.target, {
             url: `/api/v1/notes/${id}`,
             method: 'PUT',
         })).submit(event);
     },
 
-    async delete(event, id) {
+    delete(event, id) {
         (new app.Form(event.target, {
             url: `/api/v1/notes/${id}`,
             method: 'DELETE',
         })).submit(event).then(response => {
             this.getList();
         });
+    },
+
+    async getList() {
+        const resp = await app.apiHttp.get('notes')
+            .catch(error => {
+                console.log('error', error);
+
+                throw error;
+            });
+
+        console.log('getList:resp', resp)
     },
 
 
@@ -64,7 +75,7 @@ app.notes = {
         
     },
 
-    async getList() {
+    async getList_() {
         const container = document.getElementById('notes-list');
         if (!container) return;
 
@@ -134,6 +145,9 @@ app.notes = {
     },
 
     init() {
+        this.getList();
+
+        return;
         this.http = new app.Http({
             prefixUri: '/api/v1/notes'
         });

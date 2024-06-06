@@ -24,7 +24,7 @@ class Login
         session()->regenerate();
 
         // Перенаправляем на страницу
-        return ['redirect' => route('home')];
+        return ['redirect' => route('profile.show')];
     }
 
     /**
