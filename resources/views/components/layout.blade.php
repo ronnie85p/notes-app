@@ -1,6 +1,6 @@
 <html lang="ru">
     <head>
-        @includes('includes.head')
+        @include('includes.head')
     </head>
 
     <body>
