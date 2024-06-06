@@ -1,20 +1,21 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Auth;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\ApiController;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\AuthResource;
-use App\Services\Auth\Login as LoginService;
+use App\Services\Auth\LoginService;
 
-class LoginController extends ApiController
+class AuthController extends ApiController
 {
     function __construct(
         private LoginService $service 
     ) { }
 
-    function __invoke(LoginRequest $request)
+    public function login(LoginRequest $request)
     {
         return new AuthResource(
             $this->service->login($request->validated())
@@ -28,4 +29,3 @@ class LoginController extends ApiController
         );
     }
 }
-

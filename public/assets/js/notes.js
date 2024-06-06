@@ -1,120 +1,80 @@
 app.notes = {
-    http: {},
-
-    redirectTo(uri = '/') {
-        window.location.href = uri;
+    create(event) {
+        (new app.Form(event.target, {
+            resource: 'notes',
+            method: 'POST',
+        })).submit(event);
     },
 
-    setMessage(msg) {
-        const el = document.querySelector('#notes-msg');
-        if (!el) return;
+    update(event, id) {
+        (new app.Form(event.target, {
+            resource: `notes/${id}`,
+            method: 'PUT',
+        })).submit(event);
+    },
 
-        if (msg) {
-            msg = `<div class="alert alert-danger">${msg}</div>`;
+    delete(event, id) {
+        if (!confirm('Удалить заметку?')) {
+            return;
         }
 
-        el.innerHTML = msg;
+        (new app.Form(event.target, {
+            resource: `notes/${id}`,
+            method: 'DELETE',
+        })).submit(event).then(response => {
+            this.loadList();
+        });
     },
 
-    setErrors(errs) {
-        for (let name in errs) {
-            const el = document.querySelector(`[name=${name}]`);
-            if (el) {
-                el.classList.add('is-invalid');
-
-                el.addEventListener('focus', () => {
-                    el.classList.remove('is-invalid');
-                }, false)
-            }
-        }
+    getItem(id) {
+        return app.apiHttp.get(`notes/${id}`);   
     },
 
-    setErrorResponse(response) {
-        if (!response) return;
-        
-        const { data } = response;
-
-        this.setMessage(data.message);
-        this.setErrors(data.errors);
-        
+    getList() {
+        return app.apiHttp.get('notes');
     },
 
-    async create(data) {
-        try {
-            const resp = await this.http.post('', data);
-            const rdata = resp.data.data;
-    
-            if (rdata.redirect) {
-                this.redirectTo(rdata.redirect)
-            }
-        } catch (e) {
-            this.setErrorResponse(e.response);
-        }
+    async loadItem() {
+        const pathname = (new URL(window.location.href)).pathname;
+        if (!/(notes\/[0-9]+\/edit)/.test(pathname)) {
+            return;
+        } 
+
+        const id = pathname.replace(/(edit|notes|\/+)/g, '');
+        const resp = await this.getItem(id)
+            .catch(error => {
+                console.log('error', error);
+
+                throw error;
+            });
+
+        document.querySelector('.created-at').innerText = resp.data?.updated_at;
+        document.querySelector('[name=content]').value = resp.data?.content;    
     },
 
-    async update(data) {
-        try {
-            const resp = await this.http.put('', data.get('id'), data);
-            const rdata = resp.data.data;
-    
-            if (rdata.redirect) {
-                this.redirectTo(rdata.redirect)
-            }
-        } catch (e) {
-            this.setErrorResponse(e.response);
-        }
-    },
-
-    async delete(data) {
-        try {
-            const resp = await this.http.delete('', data.get('id'));
-
-            this.getList();
-        } catch (e) {
-            console.log('err', e)
-        }
-    },
-
-    async getList() {
+    async loadList() {
         const container = document.getElementById('notes-list');
         if (!container) return;
 
-        try {
-            const resp = await this.http.get('');
-            const items = resp.data.data;
+        const resp = await this.getList()
+            .catch(error => {
+                console.log('error', error);
 
-            container.innerHTML = '';
-    
-            if (items?.length) {
-                for (let i in items) {
-                    container.insertAdjacentHTML('BEFOREEND', this.buildListRow(items[i]));
-                }
+                throw error;
+            });
 
-                const actionForms = document.querySelectorAll('.notes-item-delete');
-                for (let form of actionForms) {
-                    form.addEventListener('submit', (e) => {
-                        e.preventDefault();
-
-                        this.delete(new FormData(form));
-                    }, false);
-                }
-            } else {
-                container.innerHTML = 'Список пуст';
-            }
-        } catch (e) {
-            console.log('err', e)
-        }
+        this.showListOnPage(container, resp.data);
     },
 
-    async getItem(container, id) {
-        try {
-            const resp = await this.http.get(`/${id}`);
-            const data = resp.data.data;
+    showListOnPage(container, items) {
+        container.innerHTML = '';
 
-            container.querySelector('.created-at').innerText = data.updated_at;
-            container.querySelector('[name=content]').value = data.content;
-        } catch (e) {
-            console.log('err', e)
+        if (items?.length) {
+            for (let i in items) {
+                container.insertAdjacentHTML('BEFOREEND', this.buildListRow(items[i]));
+            }
+        } else {
+            container.innerHTML = 'Список пуст';
         }
     },
 
@@ -130,7 +90,7 @@ app.notes = {
                         </div>
 
                         <div class="col text-end">
-                            <form class="notes-item-delete">
+                            <form onsubmit="app.notes.delete(event, '${item['id']}')">
                                 <input type="hidden" name="id" value="${item['id']}">
 
                                 <button class="btn btn-sm btn-outline-danger">
@@ -154,27 +114,9 @@ app.notes = {
     },
 
     init() {
-        this.http = new app.Http({
-            prefixUri: '/api/v1/notes'
-        });
-
-        const typeForms = document.querySelectorAll('#notes-create, #notes-update');
-        console.log('typeForms', typeForms)
-        for (const form of typeForms) {
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-
-                this[form.getAttribute('id').replace('notes-', '')](new FormData(e.target));
-            }, false);   
-        }
-
-        this.getList();
-
-        const editContainer = document.getElementById('notes-edit');
-        if (editContainer) {
-            this.getItem(editContainer, editContainer.dataset.id);
-        }
-    }
+        this.loadItem();
+        this.loadList();
+    },
 };
 
 app.notes.init();

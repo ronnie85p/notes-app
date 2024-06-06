@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Notes\StoreRequest;
 use App\Http\Requests\Notes\UpdateRequest;
 use App\Http\Resources\NotesResource;
-use App\Services\Notes\Core as NotesService;
+use App\Services\Notes\NotesService;
 
 class NotesController extends ApiController
 {
