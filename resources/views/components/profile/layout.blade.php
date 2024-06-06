@@ -33,7 +33,7 @@
                         </div>
 
                         <div class="col">
-                            <h1 class="h4">{{ $title }}</h1>
+                            <h1 class="h4">{{ $title ?? '' }}</h1>
                             @if(isset($subtitle))
                                 <p class="text-muted">{{ $subtitle }}</p>
                             @endif

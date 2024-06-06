@@ -1,12 +1,12 @@
 <html lang="ru">
     <head>
-        @include('includes.head')
+        @include('includes.auth.head')
     </head>
 
     <body>
         <main>
             <header class="header mb-4">
-                @include('includes.header2')
+                @include('includes.auth.header')
             </header>
 
             <section class="content">
@@ -16,7 +16,7 @@
             </section>
 
             <footer class="footer">
-                @include('includes.footer')
+                @include('includes.auth.footer')
             </footer>
         </main>
     </body>

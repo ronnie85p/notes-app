@@ -1,5 +1,5 @@
-<x-auth.layout 
-    title="Регистрация">
+<x-auth.layout>
+    <x-slot:title>Регистрация</x-slot:title>
 
     <div class="row mt-5">
         <div class="col-6 m-auto">

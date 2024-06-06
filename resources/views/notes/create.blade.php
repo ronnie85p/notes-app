@@ -1,7 +1,7 @@
-<x-layout 
-    title="Новая заметка">
+<x-page.layout>
+    <x-slot:title>Новая заметка</x-slot:title>
 
-    <ul class="navbar-nav">
+    <x-slot:navbar>
         <li class="nav-item">
             <a class="nav-link" href="{{ route('home') }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
@@ -11,9 +11,7 @@
                 К списку
             </a>
         </li>
-    </ul>
-
-    <hr />
+    </x-slot:navbar>
 
     <form onsubmit="app.notes.create(event)">
         @include('notes.form')
@@ -26,4 +24,4 @@
             </div>
         </div>
     </form>
-</x-layout>
+</x-page.layout>
