@@ -2,9 +2,9 @@ let form_errors = {};
 
 app.Form = function(formElement, options = {}) {
     this.options = {
-        url: '',
+        resource: '',
         method: 'POST',
-        contentType: 'multipart/form-data',
+        // contentType: 'multipart/form-data',
         handleResponseErrors: true,
         submitterMuted: true,
         feedbackTpl: '<div class="alert alert-{type}">{message}</div>',
@@ -26,35 +26,54 @@ app.Form = function(formElement, options = {}) {
     this.submit = (event) => {
         this.beforeSubmit(event);
 
-        return axios(this.getRequestOptions())
-                .then(response => response.data)
-                .then(response => {
-                    if (response.data?.message) {
-                        this.setFeedback(response.data.message, 'success')
-                    }
-
-                    if (response.data?.redirect) {
-                        window.location.href = response.data.redirect;
-                    }
-
-                    return response;
-                })
-                .catch(error => {
-                    if (error.response) {
-                        const { errors, message } = error.response.data;
-                        this.setFeedback(message, 'danger');
-
-                        if (this.options.handleResponseErrors === true) {
-                            this.setErrors(errors);
-                        }
-                    }
-
-                    throw error;
-                })
-                .finally(() => {
-                    this.afterSubmit();
-                });
+        return app.apiHttp.request(this.options.resource, this.getRequestOptions())
+            .then(response => this.handleResponseSuccess(response))
+            .catch(error => this.handleResponseError(error))
+            .finally(this.afterSubmit);
     }
+
+    this.getRequestOptions = () => {
+        return { 
+            ...this.options,
+            data: this.getFormData()
+        };
+    }
+
+    /**
+     * Получить данные формы
+     * 
+     * @returns 
+     */
+    this.getFormData = () => {
+        return new FormData(this.formElement);
+    }
+
+    this.handleResponseSuccess = (response) => {
+        const data = response.data;
+
+        if (data?.message) {
+            this.setFeedback(data.message, 'success');
+        }
+
+        if (data?.redirect) {
+            window.location.href = data.redirect;
+        }
+   
+        return response;
+    }
+
+    this.handleResponseError = (error) => {
+        if (error.response) {
+            const { errors, message } = error.response.data;
+            this.setFeedback(message, 'danger');
+
+            if (this.options.handleResponseErrors === true) {
+                this.setErrors(errors);
+            }
+        }
+
+        throw error;
+    },
 
     /**
      * Обработать код до отправки запроса
@@ -99,61 +118,6 @@ app.Form = function(formElement, options = {}) {
                 .replace('{message}', msg)
             : '';
     }
-
-    /**
-     * Получить конфигурацию для запроса
-     * 
-     * @returns 
-     */
-    this.getRequestOptions = () => {
-        return {
-            url: this.options.url,
-            data: this.getFormData(),
-            method: this.getRequestMethod(),
-            headers: {
-                'Content-Type': this.options.contentType
-            },
-        };
-    }
-
-    /**
-     * Получить метод запроса
-     * 
-     * @returns 
-     */
-    this.getRequestMethod = () => {
-        let method = this.options.method.toUpperCase();
-        if (method == 'PUT') {
-            method = 'POST';
-        }
-
-        return method;
-    };
-
-    /**
-     * Получить данные формы
-     * 
-     * @returns 
-     */
-    this.getFormData = () => {
-        let data = new FormData(this.formElement);
-        if (this.options.method.toUpperCase() == 'PUT') {
-            data.set('_method', 'PUT');
-        }
-
-        data.set('_token', this.getCsrfToken());
-
-        return data;
-    }
-
-    /**
-     * Получить csrf токен
-     */
-    this.getCsrfToken = () => {
-        return document
-            .querySelector("meta[name='csrf']")
-            ?.getAttribute("content");
-    },
 
     /**
      * Предотвратить выполнение события по умолчанию

@@ -11,7 +11,7 @@
 <script src="/assets/js/app.js"></script>
 <script src="/assets/js/form.js"></script>
 <!-- <script src="/assets/js/http.js"></script> -->
-<script src="/assets/js/http2.js"></script>
+<script src="/assets/js/api-http.js"></script>
 <script src="/assets/js/auth.js" defer></script>
 <script src="/assets/js/notes.js" defer></script>
 <script src="/assets/js/profile.js" defer></script>

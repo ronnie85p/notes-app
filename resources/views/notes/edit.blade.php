@@ -1,4 +1,4 @@
-<x-page.layout>
+<x-page.layout id="notes-item">
     <x-slot:title>Заметка | редактирование</x-slot:title>
     <x-slot:pagetitle>Заметка</x-slot:pagetitle>
     <x-slot:subtitle>

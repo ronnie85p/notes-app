@@ -1,111 +1,76 @@
 app.notes = {
     create(event) {
         (new app.Form(event.target, {
-            url: '/api/v1/notes',
+            resource: 'notes',
             method: 'POST',
         })).submit(event);
     },
 
     update(event, id) {
         (new app.Form(event.target, {
-            url: `/api/v1/notes/${id}`,
+            resource: `notes/${id}`,
             method: 'PUT',
         })).submit(event);
     },
 
     delete(event, id) {
         (new app.Form(event.target, {
-            url: `/api/v1/notes/${id}`,
+            resource: `notes/${id}`,
             method: 'DELETE',
         })).submit(event).then(response => {
             this.getList();
         });
     },
 
-    async getList() {
-        const resp = await app.apiHttp.get('notes')
+    getItem(id) {
+        return app.apiHttp.get(`notes/${id}`);   
+    },
+
+    getList() {
+        return app.apiHttp.get('notes');
+    },
+
+    async loadItem() {
+        const pathname = (new URL(window.location.href)).pathname;
+        if (!/(notes\/[0-9]+\/edit)/.test(pathname)) {
+            return;
+        } 
+
+        const id = pathname.replace(/(edit|notes|\/+)/g, '');
+        const resp = await this.getItem(id)
             .catch(error => {
                 console.log('error', error);
 
                 throw error;
             });
 
-        console.log('getList:resp', resp)
+        document.querySelector('.created-at').innerText = resp.data?.updated_at;
+        document.querySelector('[name=content]').value = resp.data?.content;    
     },
 
-
-
-    http: {},
-
-    redirectTo(uri = '/') {
-        window.location.href = uri;
-    },
-
-    setMessage(msg) {
-        const el = document.querySelector('#notes-msg');
-        if (!el) return;
-
-        if (msg) {
-            msg = `<div class="alert alert-danger">${msg}</div>`;
-        }
-
-        el.innerHTML = msg;
-    },
-
-    setErrors(errs) {
-        for (let name in errs) {
-            const el = document.querySelector(`[name=${name}]`);
-            if (el) {
-                el.classList.add('is-invalid');
-
-                el.addEventListener('focus', () => {
-                    el.classList.remove('is-invalid');
-                }, false)
-            }
-        }
-    },
-
-    setErrorResponse(response) {
-        if (!response) return;
-        
-        const { data } = response;
-
-        this.setMessage(data.message);
-        this.setErrors(data.errors);
-        
-    },
-
-    async getList_() {
+    async loadList() {
         const container = document.getElementById('notes-list');
         if (!container) return;
 
-        try {
-            const resp = await this.http.get('');
-            const items = resp.data.data;
+        const resp = await this.getList()
+            .catch(error => {
+                console.log('error', error);
 
-            container.innerHTML = '';
-    
-            if (items?.length) {
-                for (let i in items) {
-                    container.insertAdjacentHTML('BEFOREEND', this.buildListRow(items[i]));
-                }
-            } else {
-                container.innerHTML = 'Список пуст';
-            }
-        } catch (e) {
-            console.log('err', e)
-        }
+                throw error;
+            });
+
+        this.showListOnPage(container, resp.data);
     },
 
-    async getItem(container, id) {
-        try {
-            const resp = await this.http.get(`/${id}`);
-            const data = resp.data.data;
+    showListOnPage(container, items) {
+        container.innerHTML = '';
 
-            container.querySelector('.created-at').innerText = data.updated_at;
-            container.querySelector('[name=content]').value = data.content;
-        } catch (e) {
-            console.log('err', e)
+        if (items?.length) {
+            for (let i in items) {
+                container.insertAdjacentHTML('BEFOREEND', this.buildListRow(items[i]));
+            }
+        } else {
+            container.innerHTML = 'Список пуст';
         }
     },
 
@@ -145,25 +110,9 @@ app.notes = {
     },
 
     init() {
-        this.getList();
-
-        return;
-        this.http = new app.Http({
-            prefixUri: '/api/v1/notes'
-        });
-
-        const typeForms = document.querySelectorAll('#notes-create, #notes-update');
-      
-        for (const form of typeForms) {
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-
-                this[form.getAttribute('id').replace('notes-', '')](new FormData(e.target));
-            }, false);   
-        }
-
-        this.getList();
-    }
+        this.loadItem();
+        this.loadList();
+    },
 };
 
 app.notes.init();
