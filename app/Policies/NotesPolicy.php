@@ -30,7 +30,7 @@ class NotesPolicy
      */
     public function create(User $user): bool
     {
-        return Gate::deny('Is not authorization');
+        return true;
     }
 
     /**
