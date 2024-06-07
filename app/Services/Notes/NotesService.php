@@ -2,18 +2,25 @@
 
 namespace App\Services\Notes;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Illuminate\Support\Facades\Gate;
 use App\Models\Note;
+use App\Policies\NotesPolicy;
 
 class NotesService
 {   
+    static public function addPolicies()
+    {
+        Gate::policy(Note::class, NotesPolicy::class);
+    }
+
     /**
      * Получение списка
      * @param array $params
      * @return array
      */
-    public function getList(array $params = []): array
+    public function getList($user, array $params = []): array
     {
-        $ents = Note::where('user_id', auth()->user()->id)->get();
+        $ents = Note::where('user_id', $user->id)->get();
 
         return $ents->toArray();
     }
@@ -23,9 +30,9 @@ class NotesService
      * @param int $id
      * @return array
      */
-    public function getItem(int $id): array
+    public function getItem($user, int $id): array
     {
-        $ent = Note::where('user_id', auth()->user()->id)->findOrFail($id);
+        $ent = Note::where('user_id', $user->id)->findOrFail($id);
 
         return $ent->toArray();       
     }
@@ -36,10 +43,12 @@ class NotesService
      * @return array
      * @throws BadRequestHttpException
      */
-    public function create(array $data): array
+    public function create($user, array $data): array
     {
+        Gate::authorize('create');
+
         $data = array_merge($data, [    
-            'user_id' => auth()->user()->id
+            'user_id' => $user->id
         ]);
 
         if (!$ent = Note::create($data)) {
@@ -56,10 +65,10 @@ class NotesService
      * @return array
      * @throws BadRequestHttpException
      */
-    public function update(int $id, array $data): array
+    public function update($user, int $id, array $data): array
     {
-        $ent = Note::where('user_id', auth()->user()->id)->findOrFail($id);
-
+        $ent = Note::where('user_id', $user->id)->findOrFail($id);
+        
         if (!$ent->update($data)) {
             throw new BadRequestHttpException('При сохранении произошла ошибка.');
         }
@@ -73,9 +82,9 @@ class NotesService
      * @return void
      * @throws BadRequestHttpException
      */
-    public function delete(int $id): void
+    public function delete($user, int $id): void
     {
-        $ent = Note::where('user_id', auth()->user()->id)->findOrFail($id);
+        $ent = Note::where('user_id', $user->id)->findOrFail($id);
 
         if (!$ent->delete()) {
             throw new BadRequestHttpException('При удалении произошла ошибка.');

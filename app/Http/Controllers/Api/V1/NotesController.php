@@ -21,7 +21,7 @@ class NotesController extends ApiController
     public function index(Request $request)
     {
         return NotesResource::collection(
-            $this->service->getList($request->query())
+            $this->service->getList($request->user(), $request->query())
         );
     }
 
@@ -31,17 +31,17 @@ class NotesController extends ApiController
     public function store(StoreRequest $request)
     {
         return new NotesResource(
-            $this->service->create($request->validated())
+            $this->service->create($request->user(), $request->validated())
         );
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
         return new NotesResource(
-            $this->service->getItem($id)
+            $this->service->getItem($request->user(), $id)
         );
     }
 
@@ -51,17 +51,17 @@ class NotesController extends ApiController
     public function update(UpdateRequest $request, string $id)
     {
         return new NotesResource(
-            $this->service->update($id, $request->all())
+            $this->service->update($request->user(), $id, $request->all())
         );
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
         return new NotesResource(
-            $this->service->delete($id)
+            $this->service->delete($request->user(), $id)
         );
     }
 }
