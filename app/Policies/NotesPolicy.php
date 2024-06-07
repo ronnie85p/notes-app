@@ -2,9 +2,10 @@
 
 namespace App\Policies;
 
+use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Gate;
 use App\Models\Note;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class NotesPolicy
 {
@@ -29,7 +30,7 @@ class NotesPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return Gate::deny('Is not authorization');
     }
 
     /**

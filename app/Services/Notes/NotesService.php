@@ -45,8 +45,6 @@ class NotesService
      */
     public function create($user, array $data): array
     {
-        Gate::authorize('create');
-
         $data = array_merge($data, [    
             'user_id' => $user->id
         ]);
